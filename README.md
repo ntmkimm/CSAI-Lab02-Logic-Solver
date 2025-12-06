@@ -38,9 +38,13 @@ The directory is organized as follows:
 A text file where numbers represent islands (1-8) and 0 represents empty water cells.
 Examples:
 ```
-0, 2, 0
-0, 0, 0
-2, 0, 2
+0, 2, 0, 5, 0, 0, 2
+0, 0, 0, 0, 0, 0, 0
+4, 0, 2, 0, 2, 0, 4
+0, 0, 0, 0, 0, 0, 0
+0, 1, 0, 5, 0, 2, 0
+0, 0, 0, 0, 0, 0, 0
+4, 0, 0, 0, 0, 0, 3
 ```
 Symbols used in the final solved grid:
 
@@ -55,9 +59,13 @@ Symbols used in the final solved grid:
 
 Example:
 ```
-[ "0" , "2" , "0" ]
-[ "0" , "|" , "0" ]
-[ "2" , "-" , "2" ]
+[ "0" , "2" , "=" , "5" , "-" , "-" , "2" ]
+[ "0" , "0" , "0" , "$" , "0" , "0" , "|" ]
+[ "4" , "=" , "2" , "$" , "2" , "=" , "4" ]
+[ "$" , "0" , "0" , "$" , "0" , "0" , "|" ]
+[ "$" , "1" , "-" , "5" , "=" , "2" , "|" ]
+[ "$" , "0" , "0" , "0" , "0" , "0" , "|" ]
+[ "4" , "=" , "=" , "=" , "=" , "=" , "3" ]
 ```
 
 ## 4. How to Run
@@ -68,7 +76,7 @@ python main.py --input <input_file_path> --output <output_file_path> --method <a
 Arguments:
 - input: Path to the input text file (e.g., Inputs/input-01.txt).
 - output: Path where the solution will be saved (e.g., Outputs/output-01.txt).
-- method: The algorithm to use. Options are `sat` : Logic-based solver using CNF (Recommended, fastest); `astar` : Heuristic search using A* Algorithm; `backtrack`: Brute-force/Backtracking algorithm (for comparison).
+- method: The algorithm to use. Options: `sat` - Logic-based solver using CNF (Recommended, fastest); `astar` - Heuristic search using A* Algorithm; `backtrack` - Brute-force/Backtracking algorithm (for comparison).
 
 Examples
 ```
