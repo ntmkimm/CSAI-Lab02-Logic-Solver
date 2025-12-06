@@ -33,7 +33,6 @@ The directory is organized as follows:
 ├── utils.py             # Helper functions (I/O, Grid parsing)
 └── requirements.txt     # Python dependencies
 ```
-
 ## 3. Input/Output Format
 ### Input
 A text file where numbers represent islands (1-8) and 0 represents empty water cells.
@@ -67,7 +66,12 @@ Example:
 ```
 
 ## 4. How to Run
-Run the program via the command line using main.py.
+### Set up enviroment
+```
+pip install -r requirements.txt
+```
+### Run 
+Run the program via terminal using main.py.
 ```
 python main.py --input <input_file_path> --output <output_file_path> --method <algorithm>
 ```
