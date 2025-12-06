@@ -32,6 +32,7 @@ The directory is organized as follows:
 ├── solver_search.py     # Search algorithms (A*, Backtracking)
 ├── utils.py             # Helper functions (I/O, Grid parsing)
 └── requirements.txt     # Python dependencies
+```
 
 ## 3. Input/Output Format
 A text file where numbers represent islands (1-8) and 0 represents empty water cells.
