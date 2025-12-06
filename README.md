@@ -43,11 +43,11 @@ Examples:
 2, 0, 2
 ```
 After running solver, the result grid with bridges represented by special characters:
-| : Single vertical bridge
-$ : Double vertical bridge
-- : Single horizontal bridge
-= : Double horizontal bridge
-"number" : Island value
+    | : Single vertical bridge
+    $ : Double vertical bridge
+    - : Single horizontal bridge
+    = : Double horizontal bridge
+    "number" : Island value
 
 Example:
 ```
@@ -62,12 +62,12 @@ Run the program via the command line using main.py.
 python main.py --input <input_file_path> --output <output_file_path> --method <algorithm>
 ```
 Arguments:
---input: Path to the input text file (e.g., Inputs/input-01.txt).
---output: Path where the solution will be saved (e.g., Outputs/output-01.txt).
---method: The algorithm to use. Options are:
-    sat : Logic-based solver using CNF (Recommended, fastest).
-    astar : Heuristic search using A* Algorithm.
-    backtrack: Brute-force/Backtracking algorithm (for comparison).
+    --input: Path to the input text file (e.g., Inputs/input-01.txt).
+    --output: Path where the solution will be saved (e.g., Outputs/output-01.txt).
+    --method: The algorithm to use. Options are:
+        sat : Logic-based solver using CNF (Recommended, fastest).
+        astar : Heuristic search using A* Algorithm.
+        backtrack: Brute-force/Backtracking algorithm (for comparison).
 
 Examples
 ```
