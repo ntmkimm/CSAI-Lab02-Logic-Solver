@@ -48,14 +48,11 @@ Examples:
 ```
 Symbols used in the final solved grid:
 
-| Symbol | Meaning                   |
-|--------|---------------------------|
-|  `]`      | Single vertical bridge    |
-| `$`    | Double vertical bridge    |
-| `-`    | Single horizontal bridge  |
-| `=`    | Double horizontal bridge  |
-| `1..8` | Island                    |
-
+  - `|` : Single vertical bridge
+  - `$`: Double vertical bridge
+  - `-` : Single horizontal bridge
+  - `=` : Double horizontal bridge
+  - `1..8` : Island value
 
 Example:
 ```
