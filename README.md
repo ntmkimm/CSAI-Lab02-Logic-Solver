@@ -35,6 +35,7 @@ The directory is organized as follows:
 ```
 
 ## 3. Input/Output Format
+### Input
 A text file where numbers represent islands (1-8) and 0 represents empty water cells.
 Examples:
 ```
@@ -46,8 +47,8 @@ Examples:
 0, 0, 0, 0, 0, 0, 0
 4, 0, 0, 0, 0, 0, 3
 ```
-Symbols used in the final solved grid:
-
+### Output
+The final grid with bridges represented by special characters:
   - `|` : Single vertical bridge
   - `$`: Double vertical bridge
   - `-` : Single horizontal bridge
