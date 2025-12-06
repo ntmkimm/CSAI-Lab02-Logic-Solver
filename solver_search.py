@@ -12,44 +12,76 @@ class SearchSolver:
         self.islands_list = self.grid.islands
 
     def solve_backtracking(self):
-        """Cài đặt Backtracking (DFS)"""
+        """Cài đặt Backtracking (DFS) đệ quy"""
         start_time = time.time()
+        self.all_edges = self.get_all_edges() # Lưu danh sách cạnh để dùng trong đệ quy
         
-        # State: dictionary map (island_id_1, island_id_2) -> bridges count
-        # Sử dụng tuple sorted id làm key để tránh duplicates
-        initial_bridges = {} 
+        # State: edge_index -> count (0, 1, 2)
+        initial_assign = {}
         
-        result = self._backtrack(0, initial_bridges)
+        # State phụ: Theo dõi số cầu hiện tại của mỗi đảo để cắt tỉa nhánh nhanh (Pruning)
+        # Map: island_id -> current_bridge_count
+        current_island_counts = {isl.id: 0 for isl in self.grid.islands}
         
-        end_time = time.time()
-        return result, end_time - start_time
+        # Bắt đầu đệ quy từ cạnh thứ 0
+        if self._backtrack_recursive(0, initial_assign, current_island_counts):
+            # Nếu tìm thấy, format lại kết quả
+            final_bridges = {}
+            for i, count in initial_assign.items():
+                if count > 0:
+                    final_bridges[self.all_edges[i]] = count
+            return final_bridges, time.time() - start_time
+            
+        return None, time.time() - start_time
 
-    def _backtrack(self, index, current_bridges):
-        # Base case: Đã duyệt hết các đảo, kiểm tra xem tất cả đảo đủ cầu chưa
-        if index == len(self.islands_list):
-            if self.is_valid_solution(current_bridges):
-                return current_bridges
-            return None
+    def _backtrack_recursive(self, idx, assign, island_counts):
+        # 1. Base case: Đã duyệt hết tất cả các cạnh tiềm năng
+        if idx == len(self.all_edges):
+            # Kiểm tra xem tất cả các đảo đã đủ chỉ tiêu chưa (Goal Check)
+            for isl in self.grid.islands:
+                if island_counts[isl.id] != isl.value:
+                    return False
+            # (Tùy chọn) Kiểm tra tính liên thông (Connectivity) ở đây nếu cần
+            return True
 
-        # Tối ưu: Chọn đảo có ràng buộc chặt nhất (Most Constrained Variable)
-        # Ở đây làm đơn giản: duyệt tuần tự
-        current_island = self.islands_list[index]
+        # 2. Lấy cạnh hiện tại đang xét
+        u, v = self.all_edges[idx]
         
-        # Nếu đảo này đã đủ cầu nhờ các bước trước, next
-        current_count = self.count_bridges(current_island, current_bridges)
-        if current_count == current_island.value:
-            return self._backtrack(index + 1, current_bridges)
-        if current_count > current_island.value:
-            return None # Backtrack
+        # 3. Thử các giá trị: 0 (không cầu), 1 (1 cầu), 2 (2 cầu)
+        # Mẹo heuristic: Thử giá trị lớn trước có thể giúp đảo mau đầy (greedy), 
+        # nhưng thử 0 trước an toàn hơn cho backtracking. Ở đây ta thử 0, 1, 2.
+        for val in [0, 1, 2]:
+            
+            # --- CẮT TỈA (PRUNING) ---
+            
+            # A. Kiểm tra sức chứa (Capacity Constraint)
+            # Nếu thêm val cầu mà vượt quá số lượng yêu cầu của đảo -> Bỏ qua
+            if island_counts[u.id] + val > u.value or island_counts[v.id] + val > v.value:
+                continue
+                
+            # B. Kiểm tra cắt nhau (Crossing Constraint)
+            # Chỉ cần kiểm tra nếu val > 0. Nếu val = 0 thì không thể cắt ai.
+            if val > 0:
+                if self.is_crossing_with_assigned(self.all_edges[idx], val, assign, self.all_edges):
+                    continue
+            
+            # --- HÀNH ĐỘNG (ACTION) ---
+            
+            assign[idx] = val
+            island_counts[u.id] += val
+            island_counts[v.id] += val
+            
+            # --- ĐỆ QUY (RECURSE) ---
+            if self._backtrack_recursive(idx + 1, assign, island_counts):
+                return True # Tìm thấy solution, thoát ngay lập tức
+            
+            # --- QUAY LUI (BACKTRACK) ---
+            # Hoàn trả lại trạng thái cũ để thử giá trị khác
+            island_counts[u.id] -= val
+            island_counts[v.id] -= val
+            del assign[idx]
 
-        # Tìm các neighbors chưa xử lý (để tránh lặp cạnh)
-        # Tuy nhiên logic backtracking đơn giản nhất là duyệt theo cạnh tiềm năng
-        # Để đơn giản hóa cho bài tập này:
-        # Ta chuyển sang Backtracking trên danh sách CẠNH KHẢ THI thay vì danh sách Đảo
-        pass 
-        # (Lưu ý: Viết Backtracking trên đảo khá phức tạp, tôi sẽ viết lại theo hướng cạnh bên dưới)
-
-    # --- Triển khai lại Backtracking và A* dựa trên danh sách CẠNH ---
+        return False
     
     def get_all_edges(self):
         edges = []
