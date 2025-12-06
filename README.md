@@ -42,12 +42,16 @@ Examples:
 0, 0, 0
 2, 0, 2
 ```
-After running solver, the result grid with bridges represented by special characters:
-    - | : Single vertical bridge
-    - $ : Double vertical bridge
-    - : Single horizontal bridge
-    - = : Double horizontal bridge
-    - "number" : Island value
+Symbols used in the final solved grid:
+
+| Symbol | Meaning                   |
+|--------|---------------------------|
+| `|`    | Single vertical bridge    |
+| `$`    | Double vertical bridge    |
+| `-`    | Single horizontal bridge  |
+| `=`    | Double horizontal bridge  |
+| `1..8` | Island                    |
+
 
 Example:
 ```
@@ -65,9 +69,9 @@ Arguments:
 - input: Path to the input text file (e.g., Inputs/input-01.txt).
 - output: Path where the solution will be saved (e.g., Outputs/output-01.txt).
 - method: The algorithm to use. Options are:
--- sat : Logic-based solver using CNF (Recommended, fastest).
--- astar : Heuristic search using A* Algorithm.
--- backtrack: Brute-force/Backtracking algorithm (for comparison).
+ -  sat : Logic-based solver using CNF (Recommended, fastest).
+ - astar : Heuristic search using A* Algorithm.
+ - backtrack: Brute-force/Backtracking algorithm (for comparison).
 
 Examples
 ```
