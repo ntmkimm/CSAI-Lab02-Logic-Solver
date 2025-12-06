@@ -73,16 +73,20 @@ pip install -r requirements.txt
 ### Run 
 Run the program via terminal using main.py.
 ```
-python main.py --input <input_file_path> --output <output_file_path> --method <algorithm>
+python main.py --input <input_file_path> --method <algorithm>
 ```
 Arguments:
 - input: Path to the input text file (e.g., Inputs/input-01.txt).
-- output: Path where the solution will be saved (e.g., Outputs/output-01.txt).
 - method: The algorithm to use. Options: `sat` - Logic-based solver using CNF (Recommended, fastest); `astar` - Heuristic search using A* Algorithm; `backtrack` - Brute-force/Backtracking algorithm (for comparison).
+
+Output file will be placed at `Outputs` folder, with filename as "<input_file_stem>_<method>.txt"
 
 Examples
 ```
-python main.py --input Inputs/input-01.txt --output Outputs/output-01_sat.txt --method sat
-python main.py --input Inputs/input-02.txt --output Outputs/output-02_astar.txt --method astar
-python main.py --input Inputs/input-03.txt --output Outputs/output-03_bt.txt --method backtrack
+python main.py --input Inputs/input-01.txt --method sat
+# output as `./Outputs/output-01_sat.txt`
+python main.py --input Inputs/input-02.txt --method astar
+# output as `./Outputs/output-02_astar.txt`
+python main.py --input Inputs/input-03.txt --method backtrack
+# output as `./Outputs/output-03_backtrack.txt`
 ```

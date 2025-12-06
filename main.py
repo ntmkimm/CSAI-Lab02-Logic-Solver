@@ -7,12 +7,15 @@ from pathlib import Path
 def main():
     parser = argparse.ArgumentParser(description="Hashiwokakero Solver")
     parser.add_argument("--input", type=str, required=True, help="Path to input file")
-    parser.add_argument("--output", type=str, required=True, help="Path to output file")
     parser.add_argument("--method", type=str, default="sat", choices=["sat", "astar", "backtrack"], help="Method: sat, astar, backtrack")
     
     args = parser.parse_args()
+    input_file = Path(args.input)
+    output_dir = Path('./Outputs')
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / (input_file.stem + f"_{args.method}.txt")
     
-    if not Path(args.input).exists():
+    if not input_file.exists():
         print(f"Input file `{args.input}` not found.")
         return
 
@@ -43,8 +46,8 @@ def main():
     if bridges:
         print(f"Solved in {duration:.4f} seconds.")
         result_str = format_output(grid, bridges)
-        write_output(args.output, result_str)
-        print(f"Output written to {args.output}")
+        write_output(output_file, result_str)
+        print(f"Output written to {str(output_file)}")
         print(result_str)
     else:
         print("No solution found.")
