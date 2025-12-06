@@ -10,11 +10,11 @@ class SearchSolver:
         for isl in self.grid.islands:
             self.adj[isl.id] = self.grid.get_potential_neighbors(isl)
         self.islands_list = self.grid.islands
+        self.edges = self.get_all_edges()
 
     def solve_backtracking(self):
         """Cài đặt Backtracking (DFS) đệ quy"""
         start_time = time.time()
-        self.all_edges = self.get_all_edges() # Lưu danh sách cạnh để dùng trong đệ quy
         
         # State: edge_index -> count (0, 1, 2)
         initial_assign = {}
@@ -29,14 +29,14 @@ class SearchSolver:
             final_bridges = {}
             for i, count in initial_assign.items():
                 if count > 0:
-                    final_bridges[self.all_edges[i]] = count
+                    final_bridges[self.edges[i]] = count
             return final_bridges, time.time() - start_time
             
         return None, time.time() - start_time
 
     def _backtrack_recursive(self, idx, assign, island_counts):
         # 1. Base case: Đã duyệt hết tất cả các cạnh tiềm năng
-        if idx == len(self.all_edges):
+        if idx == len(self.edges):
             # Kiểm tra xem tất cả các đảo đã đủ chỉ tiêu chưa (Goal Check)
             for isl in self.grid.islands:
                 if island_counts[isl.id] != isl.value:
@@ -45,7 +45,7 @@ class SearchSolver:
             return True
 
         # 2. Lấy cạnh hiện tại đang xét
-        u, v = self.all_edges[idx]
+        u, v = self.edges[idx]
         
         # 3. Thử các giá trị: 0 (không cầu), 1 (1 cầu), 2 (2 cầu)
         # Mẹo heuristic: Thử giá trị lớn trước có thể giúp đảo mau đầy (greedy), 
@@ -62,7 +62,7 @@ class SearchSolver:
             # B. Kiểm tra cắt nhau (Crossing Constraint)
             # Chỉ cần kiểm tra nếu val > 0. Nếu val = 0 thì không thể cắt ai.
             if val > 0:
-                if self.is_crossing_with_assigned(self.all_edges[idx], val, assign, self.all_edges):
+                if self.is_crossing_with_assigned(self.edges[idx], val, assign):
                     continue
             
             # --- HÀNH ĐỘNG (ACTION) ---
@@ -100,7 +100,6 @@ class SearchSolver:
     def solve_astar(self):
         """Cài đặt A* Search"""
         start_time = time.time()
-        edges = self.get_all_edges()
         
         # State: (f_score, index_edge, counter, current_assignment_dict)
         # Counter dùng để tie-break khi f_score và index bằng nhau
@@ -119,30 +118,30 @@ class SearchSolver:
             f, idx, _, assign = heappop(pq)
             
             # Kiểm tra hợp lệ cục bộ (pruning)
-            if not self.is_partial_valid(assign, edges):
+            if not self.is_partial_valid(assign):
                 continue
             
             # Goal check
-            if idx == len(edges):
-                if self.check_goal(assign, edges):
+            if idx == len(self.edges):
+                if self.check_goal(assign):
                     final_bridges = {}
                     for i, count in assign.items():
                         if count > 0:
-                            final_bridges[edges[i]] = count
+                            final_bridges[self.edges[i]] = count
                     return final_bridges, time.time() - start_time
                 continue
 
             # Expand
             for val in [0, 1, 2]:
                 # Check crossing sơ bộ
-                if val > 0 and self.is_crossing_with_assigned(edges[idx], val, assign, edges):
+                if val > 0 and self.is_crossing_with_assigned(self.edges[idx], val, assign):
                     continue
                 
                 new_assign = assign.copy()
                 new_assign[idx] = val
                 
                 # Heuristic
-                h = self.heuristic(new_assign, edges)
+                h = self.heuristic(new_assign)
                 g = len(new_assign) 
                 
                 # Tăng counter lên để đảm bảo unique
@@ -154,12 +153,12 @@ class SearchSolver:
         return None, time.time() - start_time
 
     # Helper functions cho Search
-    def is_crossing_with_assigned(self, current_edge, val, assign, all_edges):
+    def is_crossing_with_assigned(self, current_edge, val, assign):
         u1, v1 = current_edge
         # Check với các cạnh đã có trong assign mà > 0
         for i, count in assign.items():
             if count > 0:
-                u2, v2 = all_edges[i]
+                u2, v2 = self.edges[i]
                 # Reuse logic check crossing từ SAT solver hoặc viết lại nhanh
                 if self.check_cross(u1, v1, u2, v2):
                     return True
@@ -181,11 +180,11 @@ class SearchSolver:
         
         return (r_v_min < r_h < r_v_max) and (c_h_min < c_v < c_h_max)
 
-    def is_partial_valid(self, assign, edges):
+    def is_partial_valid(self, assign):
         # Kiểm tra xem có đảo nào bị Overload số cầu không
         island_counts = {isl.id: 0 for isl in self.grid.islands}
         for idx, count in assign.items():
-            u, v = edges[idx]
+            u, v = self.edges[idx]
             island_counts[u.id] += count
             island_counts[v.id] += count
             
@@ -194,11 +193,11 @@ class SearchSolver:
                 return False
         return True
 
-    def check_goal(self, assign, edges):
+    def check_goal(self, assign):
         # Check exact sum
         island_counts = {isl.id: 0 for isl in self.grid.islands}
         for idx, count in assign.items():
-            u, v = edges[idx]
+            u, v = self.edges[idx]
             island_counts[u.id] += count
             island_counts[v.id] += count
             
@@ -211,11 +210,11 @@ class SearchSolver:
         # Run BFS from first island, count visited. visited == len(islands) -> True
         return True
 
-    def heuristic(self, assign, edges):
+    def heuristic(self, assign):
         # Heuristic: Tổng số cầu còn thiếu của tất cả các đảo / 2 (vì 1 cầu nối 2 đảo)
         island_current = {isl.id: 0 for isl in self.grid.islands}
         for idx, count in assign.items():
-            u, v = edges[idx]
+            u, v = self.edges[idx]
             island_current[u.id] += count
             island_current[v.id] += count
             
