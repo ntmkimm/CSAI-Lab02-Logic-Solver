@@ -25,7 +25,7 @@ The directory is organized as follows:
 │   ├── input-01.txt     
 |   └── ...
 ├── Outputs/             # Generated solutions (.txt)
-│   ├── output-01-astar.txt     
+│   ├── output-01_astar.txt     
 |   └── ...
 ├── main.py              # Entry point of the program
 ├── solver_sat.py        # SAT Solver logic (CNF generation)
@@ -79,7 +79,7 @@ Arguments:
 - input: Path to the input text file (e.g., Inputs/input-01.txt).
 - method: The algorithm to use. Options: `sat` - Logic-based solver using CNF (Recommended, fastest); `astar` - Heuristic search using A* Algorithm; `backtrack` - Brute-force/Backtracking algorithm (for comparison).
 
-Output file will be placed at `Outputs` folder, with filename as "<input_file_stem>_<method>.txt"
+Output file will be placed at `Outputs` folder, with filename as "input_file_stem_method.txt"
 
 Examples
 ```
