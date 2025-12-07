@@ -42,6 +42,29 @@ class SearchSolver:
                 if island_counts[isl.id] != isl.value:
                     return False
             # (Tùy chọn) Kiểm tra tính liên thông (Connectivity) ở đây nếu cần
+            graph = {isl.id: [] for isl in self.grid.islands}
+
+            for i, count in assign.items():
+                if count > 0:
+                    u, v = self.edges[i]
+                    graph[u.id].append(v.id)
+                    graph[v.id].append(u.id)
+
+            # 3. DFS/BFS từ một đảo bất kỳ
+            start = self.grid.islands[0].id
+            visited = set([start])
+            stack = [start]
+
+            while stack:
+                node = stack.pop()
+                for nei in graph[node]:
+                    if nei not in visited:
+                        visited.add(nei)
+                        stack.append(nei)
+
+            # 4. Kiểm tra visited == tổng số đảo
+            if len(visited) != len(self.grid.islands): 
+                return False            
             return True
 
         # 2. Lấy cạnh hiện tại đang xét
