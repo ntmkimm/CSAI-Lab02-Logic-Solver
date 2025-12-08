@@ -7,164 +7,36 @@
     "rank": "easy",
     "size": "7x7"
   },
-  "input-03.txt": {
-    "rank": "easy",
-    "size": "7x7"
+   "input-03.txt": {
+    "rank": "medium",
+    "size": "9x9"
   },
   "input-04.txt": {
-    "rank": "easy",
-    "size": "7x7"
+    "rank": "hard",
+    "size": "10x10"
   },
   "input-05.txt": {
-    "rank": "easy",
-    "size": "7x7"
+    "rank": "medium",
+    "size": "11x11"
   },
   "input-06.txt": {
-    "rank": "easy",
-    "size": "7x7"
+    "rank": "hard",
+    "size": "13x13"
   },
   "input-07.txt": {
     "rank": "hard",
-    "size": "10x10"
+    "size": "15x15"
   },
   "input-08.txt": {
     "rank": "hard",
-    "size": "10x10"
+    "size": "17x17"
   },
   "input-09.txt": {
     "rank": "hard",
-    "size": "15x15"
+    "size": "19x19"
   },
   "input-10.txt": {
     "rank": "hard",
-    "size": "7x7"
-  },
-  "input-11.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-12.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-13.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-14.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-15.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-16.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-17.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-18.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-19.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-20.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-21.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-22.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-23.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-24.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-25.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-26.txt": {
-    "rank": "hard",
-    "size": "7x7"
-  },
-  "input-27.txt": {
-    "rank": "hard",
-    "size": "10x10"
-  },
-  "input-28.txt": {
-    "rank": "hard",
-    "size": "10x10"
-  },
-  "input-29.txt": {
-    "rank": "hard",
-    "size": "10x10"
-  },
-  "input-30.txt": {
-    "rank": "hard",
-    "size": "10x10"
-  },
-  "input-31.txt": {
-    "rank": "normal",
-    "size": "10x10"
-  },
-  "input-32.txt": {
-    "rank": "normal",
-    "size": "10x10"
-  },
-  "input-33.txt": {
-    "rank": "normal",
-    "size": "10x10"
-  },
-  "input-34.txt": {
-    "rank": "hard",
-    "size": "10x10"
-  },
-  "input-35.txt": {
-    "rank": "hard",
-    "size": "15x15"
-  },
-  "input-36.txt": {
-    "rank": "very hard",
-    "size": "10x10"
-  },
-  "input-37.txt": {
-    "rank": "very hard",
-    "size": "10x10"
-  },
-  "input-38.txt": {
-    "rank": "hard",
-    "size": "15x15"
-  },
-  "input-39.txt": {
-    "rank": "easy",
-    "size": "15x9"
-  },
-  "input-40.txt": {
-    "rank": "easy",
-    "size": "15x9"
-  },
-  "input-41.txt": {
-    "rank": "easy",
-    "size": "15x9"
-  },
-  "input-42.txt": {
-    "rank": "easy",
-    "size": "15x9"
+    "size": "20x20"
   }
 }
