@@ -41,7 +41,7 @@ def main():
     elif args.method == "backtrack": 
         print("Solving using Backtracking...")
         searcher = SearchSolver(grid)
-        bridges, duration = searcher.solve_astar() 
+        bridges, duration = searcher.solve_backtracking() 
 
     if bridges:
         print(f"Solved in {duration:.4f} seconds.")

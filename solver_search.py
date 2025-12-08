@@ -63,9 +63,8 @@ class SearchSolver:
                         stack.append(nei)
 
             # 4. Kiểm tra visited == tổng số đảo
-            if len(visited) != len(self.grid.islands): 
-                return False            
-            return True
+            return len(visited) == len(self.grid.islands) 
+            # return True
 
         # 2. Lấy cạnh hiện tại đang xét
         u, v = self.edges[idx]
@@ -229,9 +228,28 @@ class SearchSolver:
                 return False
         
         # Check connectivity (BFS) - Optional but recommended
-        # Build graph from assign
-        # Run BFS from first island, count visited. visited == len(islands) -> True
-        return True
+        graph = {isl.id: [] for isl in self.grid.islands}
+
+        for i, count in assign.items():
+            if count > 0:
+                u, v = self.edges[i]
+                graph[u.id].append(v.id)
+                graph[v.id].append(u.id)
+
+        # 3. DFS/BFS từ một đảo bất kỳ
+        start = self.grid.islands[0].id
+        visited = set([start])
+        stack = [start]
+
+        while stack:
+            node = stack.pop()
+            for nei in graph[node]:
+                if nei not in visited:
+                    visited.add(nei)
+                    stack.append(nei)
+
+        # 4. Kiểm tra visited == tổng số đảo
+        return len(visited) == len(self.grid.islands) 
 
     def heuristic(self, assign):
         # Heuristic: Tổng số cầu còn thiếu của tất cả các đảo / 2 (vì 1 cầu nối 2 đảo)
