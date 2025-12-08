@@ -56,37 +56,41 @@ def read_input(file_path):
     return Grid(data)
 
 def format_output(grid, bridges):
-    """
-    Tạo output theo format yêu cầu:
-    | : 1 dọc, $ : 2 dọc
-    - : 1 ngang, = : 2 ngang
-    """
-    # Khởi tạo bảng output với giá trị gốc (số hoặc 0)
-    out_map = [[str(grid.map_data[r][c]) for c in range(grid.cols)] for r in range(grid.rows)]
-    
+    # 1. Tạo bản đồ nền chứa giá trị đảo
+    out_map = [["0"] * grid.cols for _ in range(grid.rows)]
+    for isl in grid.islands:
+        out_map[isl.r][isl.c] = str(isl.value)
+
+    # 2. Vẽ cầu
     for (u, v), count in bridges.items():
         if count == 0: continue
         
-        # Xác định hướng và ký tự
-        r1, c1 = u.r, u.c
-        r2, c2 = v.r, v.c
-        
-        if r1 == r2: # Ngang
+        # Xác định ký tự
+        is_horz = (u.r == v.r)
+        if is_horz:
             char = "-" if count == 1 else "="
-            c_start, c_end = min(c1, c2) + 1, max(c1, c2)
-            for c in range(c_start, c_end):
-                out_map[r1][c] = char
-        else: # Dọc
+            r = u.r
+            c_min, c_max = min(u.c, v.c), max(u.c, v.c)
+            # CHỈ vẽ vào khoảng giữa, không vẽ đè lên đảo đầu và đảo cuối
+            for c in range(c_min + 1, c_max):
+                if out_map[r][c] == "0": # Chỉ vẽ nếu ô đang trống
+                    out_map[r][c] = char
+        else:
             char = "|" if count == 1 else "$"
-            r_start, r_end = min(r1, r2) + 1, max(r1, r2)
-            for r in range(r_start, r_end):
-                out_map[r][c1] = char
-                
-    # Format thành string list style như đề bài
+            c = u.c
+            r_min, r_max = min(u.r, v.r), max(u.r, v.r)
+            for r in range(r_min + 1, r_max):
+                if out_map[r][c] == "0":
+                    out_map[r][c] = char
+
+    # 3. Chuyển thành chuỗi theo format đề bài
     result_lines = []
     for row in out_map:
-        line_str = "[ " + " , ".join([f'"{x}"' for x in row]) + " ]"
+        # Format từng phần tử thành "x"
+        formatted_row = [f'"{x}"' for x in row]
+        line_str = "[ " + " , ".join(formatted_row) + " ]"
         result_lines.append(line_str)
+        
     return "\n".join(result_lines)
 
 def write_output(file_path, content):
