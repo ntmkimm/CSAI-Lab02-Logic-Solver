@@ -164,7 +164,7 @@ class SearchSolver:
                 
                 # Heuristic
                 h = self.heuristic(new_assign)
-                g = len(new_assign) 
+                g = sum(new_assign.values())
                 
                 # Tăng counter lên để đảm bảo unique
                 counter += 1
