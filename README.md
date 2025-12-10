@@ -86,7 +86,7 @@ Output file will be placed at `Outputs` folder, with filename as "input-file-ste
 Examples
 ```
 python main.py --input Inputs/input-01.txt --method backtrack
-# output as `./Outputs/input-03_backtrack.txt`
+# output as `./Outputs/input-01_backtrack.txt`
 python main.py --input Inputs/input-01.txt --method bruteforce
 # output as `./Outputs/input-01_bruteforce.txt`
 python main.py --input Inputs/input-02.txt --method sat
