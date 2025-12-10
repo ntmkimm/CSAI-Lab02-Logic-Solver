@@ -24,7 +24,7 @@ class SATSolver:
 
     def solve(self):
         # 1. Xác định các cạnh tiềm năng (u, v) sao cho u.id < v.id
-        # Bước này cần làm trước để có self.potential_edges cho các hàm sau dùng
+        # xác định self.potential_edges trước khi xây dựng các ràng buộc
         self.potential_edges = []
         for isl in self.grid.islands:
             neighbors = self.grid.get_potential_neighbors(isl)
@@ -32,12 +32,11 @@ class SATSolver:
                 if isl.id < nb.id:
                     self.potential_edges.append((isl, nb))
 
-        # 2. Gọi hàm tạo ràng buộc cơ bản (Tổng số cầu + Không cắt nhau)
-        # Hàm này cũng sẽ khởi tạo self.edge_vars để dùng cho bước sau
+        # 2. tạo ràng buộc cơ bản (Tổng số cầu + sức chứa đảo + Không cắt nhau)
+        # Hàm này cũng sẽ khởi tạo self.edge_vars (v1) để dùng cho ràng buộc liên thông 
         self.build_basic_constraints()
 
-        # 3. Gọi hàm tạo ràng buộc liên thông (Connectivity)
-        # Đây là bước quan trọng để đảm bảo đồ thị không bị ngắt quãng
+        # ràng buộc đảm bảo liên thông
         self.add_connectivity_constraints()
 
         # 4. Giải và trả về kết quả
@@ -59,14 +58,9 @@ class SATSolver:
                     edge_key = tuple(sorted((u.id, v.id)))
                     self.edge_vars[edge_key] = v1
                     # Logic: Nếu có 2 cầu (v2=True) thì tính là 2, 
-                    # nhưng CardEnc chỉ đếm số biến True.
-                    # Mẹo: Tạo biến phụ để đếm tổng trọng số hoặc dùng CardEnc với trọng số (nếu thư viện hỗ trợ tốt),
-                    # Cách đơn giản cho CNF thuần:
-                    # Coi v1 là "có ít nhất 1 cầu", v2 là "có 2 cầu".
+                    # Coi v1 là "có ít nhất 1 cầu", v2 là "có tồn tại cầu thứ 2".
                     # Số cầu = (1 nếu v1) + (1 nếu v2).
                     # Ràng buộc: v2 -> v1 (Nếu có 2 cầu thì phải có ít nhất 1 cầu)
-
-                    # v2 -> v1 (Có 2 cầu thì phải có 1 cầu)
                     self.solver.add_clause([-v2, v1]) 
                     adj_vars.append(v1)
                     adj_vars.append(v2)
@@ -112,24 +106,24 @@ class SATSolver:
                 level_vars[i][k] = self.next_var
                 self.next_var += 1
 
-        # 1. Ràng buộc Root: Root luôn ở mức 0
+        # 1. Ràng buộc Root: Root luôn ở level 0
         self.solver.add_clause([level_vars[0][0]]) 
         for k in range(1, n):
-            self.solver.add_clause([-level_vars[0][k]]) # Root không thể ở mức > 0
+            self.solver.add_clause([-level_vars[0][k]]) # Root không thể ở level > 0
 
-        # 2. Các đảo khác: Mỗi đảo có đúng 1 mức độ sâu (từ 1 đến n-1)
-        # Root chiếm mức 0, nên các đảo khác không được ở mức 0
+        # 2. Các đảo khác: Mỗi đảo có đúng 1 level độ sâu (từ 1 đến n-1)
+        # Root chiếm level 0, nên các đảo khác không được ở level 0
         for i in range(1, n):
             self.solver.add_clause([-level_vars[i][0]]) 
             
-            # Sử dụng CardEnc để đảm bảo mỗi đảo chỉ có đúng 1 mức k (k in 1..n-1)
+            # Sử dụng CardEnc để đảm bảo mỗi đảo chỉ có đúng 1 level k (k in 1..n-1)
             possible_levels = [level_vars[i][k] for k in range(1, n)]
             cnf = CardEnc.equals(lits=possible_levels, bound=1, top_id=self.next_var)
             self.solver.append_formula(cnf.clauses)
             self.next_var = cnf.nv + 1
 
         # 3. Ràng buộc lan truyền (Propagation Constraint)
-        # Nếu đảo u ở mức k, nó phải có một hàng xóm v được nối cầu và v ở mức k-1
+        # Nếu đảo u ở level k, nó phải có một hàng xóm v được nối cầu và v ở level k-1
         # Logic: Level[u][k] => OR( HasBridge(u,v) AND Level[v][k-1] ) với mọi neighbor v
         # CNF: ~Level[u][k] OR Aux_v1 OR Aux_v2 ...
         
@@ -137,7 +131,7 @@ class SATSolver:
             u = islands[i]
             neighbors = self.grid.get_potential_neighbors(u)
             
-            for k in range(1, n): # Với mọi mức k
+            for k in range(1, n): # Với mọi level k
                 clauses_or = [-level_vars[i][k]] # Bắt đầu mệnh đề: ~L(u,k) v ...
                 
                 valid_neighbors = []
@@ -152,7 +146,7 @@ class SATSolver:
                     if edge_key not in self.edge_vars: continue
                     bridge_var = self.edge_vars[edge_key]
 
-                    # Biến mức của v tại k-1
+                    # Biến level của v tại k-1
                     prev_level_var = level_vars[v_idx][k-1]
 
                     # Tạo biến phụ trợ P đại diện cho (Bridge(u,v) AND Level(v, k-1))
@@ -164,7 +158,7 @@ class SATSolver:
                     p_var = self.next_var
                     self.next_var += 1
                     
-                    # Định nghĩa P: P chỉ được True nếu cả cầu và mức k-1 thỏa mãn
+                    # Định nghĩa P: P chỉ được True nếu cả cầu và level k-1 thỏa mãn
                     # P -> Bridge
                     self.solver.add_clause([-p_var, bridge_var])
                     # P -> Level(v, k-1)
@@ -172,7 +166,7 @@ class SATSolver:
                     
                     clauses_or.append(p_var)
                 
-                # Thêm mệnh đề chính: Nếu u ở mức k, phải có ít nhất 1 P_var đúng
+                # Thêm mệnh đề chính: Nếu u ở level k, phải có ít nhất 1 P_var đúng
                 self.solver.add_clause(clauses_or)
 
     def is_crossing(self, u1, v1, u2, v2):
@@ -195,7 +189,7 @@ class SATSolver:
         c_v = vert[0].c
         r_v_min, r_v_max = min(vert[0].r, vert[1].r), max(vert[0].r, vert[1].r)
         
-        # ĐIỀU KIỆN CẮT NHAU CHẶT (Strictly between)
+        # ĐIỀU KIỆN CẮT NHAU 
         # Dòng của cầu ngang phải nằm GIỮA 2 đầu cầu dọc
         # Cột của cầu dọc phải nằm GIỮA 2 đầu cầu ngang
         return (r_v_min < r_h < r_v_max) and (c_h_min < c_v < c_h_max)
