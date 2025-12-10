@@ -25,11 +25,13 @@ The directory is organized as follows:
 │   ├── input-01.txt     
 |   └── ...
 ├── Outputs/             # Generated solutions (.txt)
-│   ├── output-01_astar.txt     
+│   ├── input-01_astar.txt     
 |   └── ...
 ├── main.py              # Entry point of the program
+├── cnf_builder.py       # CNF Builder for A* Solver and SAT Solver
 ├── solver_sat.py        # SAT Solver logic (CNF generation)
-├── solver_search.py     # Search algorithms (A*, Backtracking)
+├── solver_astar.py      # Search algorithms (A*)
+├── solver_blind.py      # Search algorithms (BruteForce, Backtracking)
 ├── utils.py             # Helper functions (I/O, Grid parsing)
 └── requirements.txt     # Python dependencies
 ```
@@ -77,16 +79,18 @@ python main.py --input <input_file_path> --method <algorithm>
 ```
 Arguments:
 - input: Path to the input text file (e.g., Inputs/input-01.txt).
-- method: The algorithm to use. Options: `sat` - Logic-based solver using CNF (Recommended, fastest); `astar` - Heuristic search using A* Algorithm; `backtrack` - Brute-force/Backtracking algorithm (for comparison).
+- method: The algorithm to use. Options: `sat` - Logic-based solver using CNF (Recommended, fastest); `astar` - Heuristic search using A* Algorithm; `backtrack` - Backtracking algorithm (for comparison); `bruteforce` - Brute-force algorithm (for comparison).
 
-Output file will be placed at `Outputs` folder, with filename as "input_file_stem_method.txt"
+Output file will be placed at `Outputs` folder, with filename as "input-file-stem_method.txt"
 
 Examples
 ```
-python main.py --input Inputs/input-01.txt --method sat
-# output as `./Outputs/output-01_sat.txt`
-python main.py --input Inputs/input-02.txt --method astar
-# output as `./Outputs/output-02_astar.txt`
-python main.py --input Inputs/input-03.txt --method backtrack
-# output as `./Outputs/output-03_backtrack.txt`
+python main.py --input Inputs/input-01.txt --method backtrack
+# output as `./Outputs/input-03_backtrack.txt`
+python main.py --input Inputs/input-01.txt --method bruteforce
+# output as `./Outputs/input-01_bruteforce.txt`
+python main.py --input Inputs/input-02.txt --method sat
+# output as `./Outputs/input-02_sat.txt`
+python main.py --input Inputs/input-03.txt --method astar
+# output as `./Outputs/input-03_astar.txt`
 ```
