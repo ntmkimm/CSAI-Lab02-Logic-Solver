@@ -1,7 +1,8 @@
 import argparse
 from utils import read_input, write_output, format_output
 from solver_sat import SATSolver
-from solver_search_cnf import SearchSolver
+from solver_astar import AStarSolver
+from solver_blind import BlindSolver
 from pathlib import Path
 
 def main():
@@ -35,16 +36,16 @@ def main():
         
     elif args.method == "astar":
         print("Solving using A*...")
-        searcher = SearchSolver(grid)
+        searcher = AStarSolver(grid)
         bridges, duration = searcher.solve_astar_cnf()
         
     elif args.method == "backtrack": 
         print("Solving using Backtracking...")
-        searcher = SearchSolver(grid)
+        searcher = BlindSolver(grid)
         bridges, duration = searcher.solve_backtracking() 
     elif args.method == "bruteforce":
         print("Solving using Bruteforce DFS")
-        searcher = SearchSolver(grid)
+        searcher = BlindSolver(grid)
         bridges, duration = searcher.solve_bruteforce_with_connectivity()
 
     if bridges:

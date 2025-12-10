@@ -20,6 +20,8 @@ class Grid:
             for c in range(self.cols):
                 if raw_data[r][c] > 0:
                     self.islands.append(Island(r, c, raw_data[r][c]))
+        
+        self.get_potential_edges()
 
     def get_potential_neighbors(self, island):
         """Tìm các đảo có thể kết nối với đảo hiện tại (thẳng hàng, không bị chặn)"""
@@ -35,13 +37,47 @@ class Grid:
                     break
                 r += dr
                 c += dc
+                
         return neighbors
+    
+    def get_potential_edges(self):
+        self.potential_edges = []
+        for isl in self.islands:
+            neighbors = self.get_potential_neighbors(isl)
+            for nb in neighbors:
+                if isl.id < nb.id:
+                    self.potential_edges.append((isl, nb))
 
     def get_island_at(self, r, c):
         for isl in self.islands:
             if isl.r == r and isl.c == c:
                 return isl
         return None
+
+def is_crossing(u1: Island, v1: Island, u2: Island, v2: Island):
+        # Xác định hướng: True là Ngang, False là Dọc
+        h1 = (u1.r == v1.r)
+        h2 = (u2.r == v2.r)
+        
+        # Nếu cùng hướng (cùng ngang hoặc cùng dọc) -> Không bao giờ cắt (do đã check lân cận)
+        if h1 == h2: return False
+        
+        # Gán nhãn ngang/dọc
+        horz = (u1, v1) if h1 else (u2, v2)
+        vert = (u2, v2) if h1 else (u1, v1)
+        
+        # Tọa độ Ngang: Dòng r_h, Cột từ c_h_min đến c_h_max
+        r_h = horz[0].r
+        c_h_min, c_h_max = min(horz[0].c, horz[1].c), max(horz[0].c, horz[1].c)
+        
+        # Tọa độ Dọc: Cột c_v, Dòng từ r_v_min đến r_v_max
+        c_v = vert[0].c
+        r_v_min, r_v_max = min(vert[0].r, vert[1].r), max(vert[0].r, vert[1].r)
+        
+        # ĐIỀU KIỆN CẮT NHAU 
+        # Dòng của cầu ngang phải nằm GIỮA 2 đầu cầu dọc
+        # Cột của cầu dọc phải nằm GIỮA 2 đầu cầu ngang
+        return (r_v_min < r_h < r_v_max) and (c_h_min < c_v < c_h_max)
 
 def read_input(file_path):
     data = []
