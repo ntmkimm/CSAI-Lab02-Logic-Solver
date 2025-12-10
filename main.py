@@ -1,13 +1,13 @@
 import argparse
 from utils import read_input, write_output, format_output
 from solver_sat import SATSolver
-from solver_search import SearchSolver
+from solver_search_cnf import SearchSolver
 from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser(description="Hashiwokakero Solver")
     parser.add_argument("--input", type=str, required=True, help="Path to input file")
-    parser.add_argument("--method", type=str, default="sat", choices=["sat", "astar", "backtrack"], help="Method: sat, astar, backtrack")
+    parser.add_argument("--method", type=str, default="sat", choices=["sat", "astar", "backtrack", "bruteforce"], help="Method: sat, astar, backtrack, bruteforce")
     
     args = parser.parse_args()
     input_file = Path(args.input)
@@ -36,12 +36,16 @@ def main():
     elif args.method == "astar":
         print("Solving using A*...")
         searcher = SearchSolver(grid)
-        bridges, duration = searcher.solve_astar()
+        bridges, duration = searcher.solve_astar_cnf()
         
     elif args.method == "backtrack": 
         print("Solving using Backtracking...")
         searcher = SearchSolver(grid)
         bridges, duration = searcher.solve_backtracking() 
+    elif args.method == "bruteforce":
+        print("Solving using Bruteforce DFS")
+        searcher = SearchSolver(grid)
+        bridges, duration = searcher.solve_bruteforce_with_connectivity()
 
     if bridges:
         print(f"Solved in {duration:.4f} seconds.")
